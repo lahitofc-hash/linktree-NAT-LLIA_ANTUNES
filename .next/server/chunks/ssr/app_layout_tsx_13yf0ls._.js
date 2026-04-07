@@ -1,0 +1,3 @@
+module.exports=[33290,a=>{"use strict";var b=a.i(7997);function c({children:a}){return(0,b.jsx)("html",{lang:"pt-br",children:(0,b.jsx)("body",{className:"antialiased selection:bg-purple-500/30",children:a})})}function c({children:a}){return(0,b.jsx)("html",{lang:"pt-br",children:(0,b.jsx)("body",{className:"antialiased",children:a})})}a.s(["default",0,c,"metadata",0,{title:"Nome da Artista | Links Oficiais",description:"Bio links e lançamentos",icons:{icon:"/icon.png",shortcut:"/icon.png",apple:"/icon.png"}}])},70864,a=>{a.n(a.i(33290))}];
+
+//# sourceMappingURL=app_layout_tsx_13yf0ls._.js.map
