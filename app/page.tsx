@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import Papa from "papaparse";
 import * as Icons from "lucide-react";
 
-// COLE SEU LINK CSV AQUI (depois de organizar a planilha)
-const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSg2WzGx7rXW7B0aVTVOmv4_0OJ_9T43Ovk_-Y61yOmUhyq_kl5NYDDKV6FtJkUpMknnbGYLbmKExF_/pub?output=csv";
-export default function LinktreeProfissional() {
+const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSg2WzGx7rXW7B0aVTVOmv4_0OJ_9T43Ovk_-Y61yOmUhyq_kl5NYDDKV6FtJkUpMknnbGYLbmKExF_/pub?gid=0&single=true&output=csv";
+
+export default function Home() {
   const [links, setLinks] = useState([]);
   const [config, setConfig] = useState({
     nome_artista: "Nattália Antunes",
@@ -28,10 +28,8 @@ export default function LinktreeProfissional() {
         console.log("Dados carregados:", data);
         
         if (data && data.length > 0) {
-          // Primeira linha tem a configuração da artista
           const primeiraLinha = data[0];
           
-          // Só atualiza se tiver valores válidos
           if (primeiraLinha.nome_artista) {
             setConfig({
               nome_artista: primeiraLinha.nome_artista,
@@ -42,7 +40,6 @@ export default function LinktreeProfissional() {
             });
           }
           
-          // Filtra os links (linhas que têm label e url preenchidos)
           const linksList = data
             .filter(row => row.label && row.label.trim() !== "" && row.url && row.url.trim() !== "")
             .map(row => ({
@@ -53,7 +50,6 @@ export default function LinktreeProfissional() {
             }));
           
           setLinks(linksList);
-          console.log("Links processados:", linksList);
         }
         
       } catch (error) {
@@ -80,7 +76,11 @@ export default function LinktreeProfissional() {
         }}
       />
 
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center mb-12 text-center">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        className="flex flex-col items-center mb-12 text-center"
+      >
         <div 
           className="w-28 h-28 rounded-full border-2 p-1.5 mb-6 shadow-2xl overflow-hidden"
           style={{ borderColor: `${themeColor}80`, boxShadow: `0 0 30px ${themeColor}33` }}
@@ -89,7 +89,9 @@ export default function LinktreeProfissional() {
             src={config.avatar} 
             alt="Avatar" 
             className="w-full h-full rounded-full object-cover bg-zinc-800"
-            onError={(e) => { e.target.src = "https://randomuser.me/api/portraits/women/68.jpg"; }}
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => { 
+              e.currentTarget.src = "https://randomuser.me/api/portraits/women/68.jpg"; 
+            }}
           />
         </div>
         
