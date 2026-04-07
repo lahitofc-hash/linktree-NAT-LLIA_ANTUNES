@@ -19,8 +19,6 @@ export default function Home() {
         const text = await response.text();
         const data = Papa.parse(text, { header: true, skipEmptyLines: true }).data;
         
-        console.log("Dados carregados:", data);
-        
         if (data && data.length > 0) {
           const primeiraLinha = data[0];
           
@@ -54,7 +52,7 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // TELA DE LOADING - SEM FLASH DE CONTEÚDO ANTIGO
+  // Tela de loading
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -66,7 +64,6 @@ export default function Home() {
     );
   }
 
-  // Só mostra o conteúdo depois que os dados reais chegaram
   if (!config) return null;
 
   const themeColor = config.color || "#a855f7";
@@ -104,7 +101,7 @@ export default function Home() {
             />
           ) : (
             <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold">
-              {config.nome_artista?.charAt(0) || "N"}
+              {config.nome_artista ? config.nome_artista.charAt(0) : "N"}
             </div>
           )}
         </div>
