@@ -53,31 +53,32 @@ export default function LinktreeMaster() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-zinc-100 flex flex-col items-center px-6 py-16 font-sans selection:bg-purple-500/30">
       
-      {/* HEADER DINÂMICO */}
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }} 
-        animate={{ opacity: 1, y: 0 }} 
-        className="flex flex-col items-center mb-12 text-center"
-      >
-        <div 
-          className="w-28 h-28 rounded-full border-2 p-1.5 mb-6 shadow-2xl transition-all duration-1000"
-          style={{ 
-            borderColor: `${config.color}80`, 
-            boxShadow: `0 0 30px ${config.color}33` 
-          }}
-        >
-          <div className="w-full h-full rounded-full bg-zinc-800 overflow-hidden border border-white/5">
-             {/* eslint-disable-next-line @next/next/no-img-element */}
-             <img 
-               src={config.avatar} 
-               alt="Artista" 
-               className="object-cover w-full h-full hover:scale-110 transition-transform duration-500" 
-             />
-          </div>
-        </div>
-        <h1 className="text-2xl font-bold tracking-tighter uppercase mb-1">NOME DA ARTISTA</h1>
-        <p className="text-zinc-500 text-[10px] tracking-[0.3em] uppercase font-medium">{config.bio}</p>
-      </motion.div>
+      {/* HEADER DINÂMICO COMPLETO */}
+<motion.div 
+  initial={{ opacity: 0, y: -20 }} 
+  animate={{ opacity: 1, y: 0 }} 
+  className="flex flex-col items-center mb-12 text-center"
+>
+  <div 
+    className="w-28 h-28 rounded-full border-2 p-1.5 mb-6 shadow-2xl transition-all duration-1000"
+    style={{ borderColor: `${config.color}80`, boxShadow: `0 0 30px ${config.color}33` }}
+  >
+    <div className="w-full h-full rounded-full bg-zinc-800 overflow-hidden border border-white/5">
+       <img 
+         src={config.avatar} 
+         alt="Avatar Artista" 
+         className="object-cover w-full h-full hover:scale-110 transition-transform duration-500" 
+       />
+    </div>
+  </div>
+  {/* O nome agora vem da coluna 'label' da primeira linha ou um padrão */}
+  <h1 className="text-2xl font-bold tracking-tighter uppercase mb-1">
+    {data[0]?.nome_artista || "NOME DA ARTISTA"}
+  </h1>
+  <p className="text-zinc-500 text-[10px] tracking-[0.3em] uppercase font-medium">
+    {config.bio}
+  </p>
+</motion.div>
 
       {/* LISTA DE LINKS */}
       <div className="w-full max-w-[400px] space-y-4">
