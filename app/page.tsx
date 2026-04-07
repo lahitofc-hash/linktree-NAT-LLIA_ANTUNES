@@ -76,9 +76,11 @@ export default function LinktreeProfissional() {
             className="object-cover w-full h-full rounded-full bg-zinc-800" 
           />
         </div>
-        <h1 className="text-2xl font-bold tracking-tighter uppercase mb-1 drop-shadow-md">
-          {config.nome_artista || "CARREGANDO..."}
-        </h1>
+        // Procure o <h1> e mude para:
+<h1 className="text-2xl font-bold tracking-tighter uppercase mb-1 drop-shadow-md">
+  {config.nome_artista || config["nome_artista"] || "CARREGANDO..."}
+</h1>
+
         <p className="text-zinc-400 text-[10px] tracking-[0.3em] uppercase font-medium">
           {config.bio || ""}
         </p>
