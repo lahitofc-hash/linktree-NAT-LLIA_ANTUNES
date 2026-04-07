@@ -17,28 +17,30 @@ export default function LinktreeProfissional() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Busca os links da Aba 1
-        const resLinks = await fetch(URL_LINKS);
-        const textLinks = await resLinks.text();
-        const dataLinks = Papa.parse(textLinks, { header: true }).data;
+  const fetchData = async () => {
+    try {
+      const [resLinks, resConfig] = await Promise.all([
+        fetch(URL_LINKS),
+        fetch(URL_CONFIG)
+      ]);
 
-        // Busca as configurações da Aba 2
-        const resConfig = await fetch(URL_CONFIG);
-        const textConfig = await resConfig.text();
-        const dataConfig = Papa.parse(textConfig, { header: true }).data[0];
+      const textLinks = await resLinks.text();
+      const textConfig = await resConfig.text();
 
-        setLinks(dataLinks.filter((l: any) => l.label));
-        setConfig(dataConfig || {});
-      } catch (error) {
-        console.error("Erro ao carregar dados", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+      const dataLinks = Papa.parse(textLinks, { header: true, skipEmptyLines: true }).data;
+      const dataConfig = Papa.parse(textConfig, { header: true, skipEmptyLines: true }).data[0];
+
+      // Filtra links que possuem pelo menos um rótulo (label)
+      setLinks(dataLinks.filter((l: any) => l.label));
+      setConfig(dataConfig || {});
+    } catch (error) {
+      console.error("Erro ao carregar dados", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchData();
+}, []);
 
   const themeColor = config.color || "#a855f7";
 
@@ -73,37 +75,47 @@ export default function LinktreeProfissional() {
           {config.bio || "CANTORA"}
         </p>
       </motion.div>
+{/* LINKS DINÂMICOS (ABA LINKS) */}
+<div className="w-full max-w-[400px] space-y-4 z-10">
+  <AnimatePresence mode="wait">
+    {!loading && links.map((link, index) => {
+      
+      // Tratamento do ícone: Garante que "instagram" vire "Instagram"
+      const iconName = link.icon 
+        ? link.icon.charAt(0).toUpperCase() + link.icon.slice(1).toLowerCase() 
+        : "ExternalLink";
+      
+      // @ts-ignore
+      const IconComponent = Icons[iconName] || Icons.ExternalLink;
+      const isHighlighted = String(link.highlight).toLowerCase() === "true";
 
-      {/* LINKS DINÂMICOS (ABA LINKS) */}
-      <div className="w-full max-w-[400px] space-y-4 z-10">
-        <AnimatePresence mode="wait">
-          {!loading && links.map((link, index) => {
-            // @ts-ignore
-            const IconComponent = Icons[link.icon] || Icons.ExternalLink;
-            const isHighlighted = String(link.highlight).toLowerCase() === "true";
+      return (
+        <motion.a
+          key={index}
+          href={link.url?.startsWith("http") ? link.url : `https://${link.url}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }} // Feedback visual no toque (Mobile)
+          className={`group flex items-center p-4 rounded-2xl border transition-all duration-300
+            ${isHighlighted ? "bg-white text-black border-white shadow-xl" : "bg-black/40 backdrop-blur-md border-white/10 hover:bg-black/60"}
+          `}
+          style={{ 
+            touchAction: "manipulation", // Remove o delay de 300ms do clique no mobile
+            ...(!isHighlighted ? { borderLeft: `4px solid ${themeColor}` } : {}) 
+          }}
+        >
+          <div className="mr-4" style={{ color: isHighlighted ? "black" : themeColor }}>
+            <IconComponent size={24} />
+          </div>
+          <span className="text-[16px] font-bold flex-1 tracking-tight">{link.label}</span>
+          <Icons.ArrowUpRight size={18} className="opacity-20" />
+        </motion.a>
+      );
+    })}
+  </AnimatePresence>
+</div>
 
-            return (
-              <motion.a
-                key={index}
-                href={link.url?.startsWith("http") ? link.url : `https://${link.url}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.02 }}
-                className={`group flex items-center p-4 rounded-2xl border transition-all duration-300
-                  ${isHighlighted ? "bg-white text-black border-white shadow-xl" : "bg-black/40 backdrop-blur-md border-white/10 hover:bg-black/60"}
-                `}
-                style={!isHighlighted ? { borderLeftColor: themeColor, borderLeftWidth: '4px' } : {}}
-              >
-                <div className="mr-4" style={{ color: isHighlighted ? "black" : themeColor }}>
-                  <IconComponent size={24} />
-                </div>
-                <span className="text-[16px] font-bold flex-1 tracking-tight">{link.label}</span>
-                <Icons.ArrowUpRight size={18} className="opacity-20" />
-              </motion.a>
-            );
-          })}
-        </AnimatePresence>
-      </div>
       
       {/* SEU RODAPÉ PERSONALIZADO */}
       <footer className="mt-auto pt-20 pb-8 flex flex-col items-center">
