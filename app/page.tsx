@@ -5,17 +5,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import Papa from "papaparse";
 import * as Icons from "lucide-react";
 
-const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSg2WzGx7rXW7B0aVTVOmv4_0OJ_9T43Ovk_-Y61yOmUhyq_kl5NYDDKV6FtJkUpMknnbGYLbmKExF_/pub?output=csv";
+const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSg2WzGx7rXW7B0aVTVOmv4_0OJ_9T43Ovk_-Y61yOmUhyq_kl5NYDDKV6FtJkUpMknnbGYLbmKExF_/pub?gid=0&single=true&output=csv";
 
 export default function Home() {
   const [links, setLinks] = useState([]);
-  const [config, setConfig] = useState({
-    nome_artista: "Nattália Antunes",
-    bio: "CANTORA & COMPOSITORA",
-    color: "#a855f7",
-    avatar: "",
-    bg_image: ""
-  });
+  const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,15 +24,14 @@ export default function Home() {
         if (data && data.length > 0) {
           const primeiraLinha = data[0];
           
-          if (primeiraLinha.nome_artista) {
-            setConfig({
-              nome_artista: primeiraLinha.nome_artista,
-              bio: primeiraLinha.bio || "CANTORA & COMPOSITORA",
-              color: primeiraLinha.color || "#a855f7",
-              avatar: primeiraLinha.avatar || "https://randomuser.me/api/portraits/women/68.jpg",
-              bg_image: primeiraLinha.bg_image || ""
-            });
-          }
+          setConfig({
+            nome_artista: primeiraLinha.nome_artista || "Natállia Antunes",
+            bio: primeiraLinha.bio || "CANTORA",
+            color: primeiraLinha.color || "#a855f7",
+            avatar: primeiraLinha.avatar || "",
+            avatar_position: primeiraLinha.avatar_position || "center",
+            bg_image: primeiraLinha.bg_image || ""
+          });
           
           const linksList = data
             .filter(row => row.label && row.label.trim() !== "" && row.url && row.url.trim() !== "")
@@ -61,6 +54,21 @@ export default function Home() {
     fetchData();
   }, []);
 
+  // TELA DE LOADING - SEM FLASH DE CONTEÚDO ANTIGO
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white/60 text-sm">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Só mostra o conteúdo depois que os dados reais chegaram
+  if (!config) return null;
+
   const themeColor = config.color || "#a855f7";
 
   return (
@@ -77,40 +85,42 @@ export default function Home() {
       />
 
       <motion.div 
-  initial={{ opacity: 0, y: -20 }} 
-  animate={{ opacity: 1, y: 0 }} 
-  className="flex flex-col items-center mb-12 text-center"
->
-  <div 
-    className="w-32 h-32 rounded-full border-4 p-1 mb-6 shadow-2xl overflow-hidden bg-zinc-800"
-    style={{ borderColor: `${themeColor}80`, boxShadow: `0 0 30px ${themeColor}33` }}
-  >
-    {config.avatar ? (
-      <img 
-        src={config.avatar} 
-        alt={config.nome_artista}
-        className="w-full h-full rounded-full object-cover"
-        style={{ objectPosition: "center" }}
-      />
-    ) : (
-      <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold">
-        {config.nome_artista?.charAt(0) || "N"}
-      </div>
-    )}
-  </div>
-  
-  <h1 className="text-2xl font-bold tracking-tighter uppercase mb-1 drop-shadow-md">
-    {config.nome_artista || "Carregando..."}
-  </h1>
+        initial={{ opacity: 0, y: -20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        className="flex flex-col items-center mb-12 text-center"
+      >
+        <div 
+          className="w-32 h-32 rounded-full border-4 p-1 mb-6 shadow-2xl overflow-hidden bg-zinc-800"
+          style={{ borderColor: `${themeColor}80`, boxShadow: `0 0 30px ${themeColor}33` }}
+        >
+          {config.avatar ? (
+            <img 
+              src={config.avatar} 
+              alt={config.nome_artista}
+              className="w-full h-full rounded-full object-cover"
+              style={{ 
+                objectPosition: config.avatar_position || "center"
+              }}
+            />
+          ) : (
+            <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold">
+              {config.nome_artista?.charAt(0) || "N"}
+            </div>
+          )}
+        </div>
+        
+        <h1 className="text-2xl font-bold tracking-tighter uppercase mb-1 drop-shadow-md">
+          {config.nome_artista}
+        </h1>
 
-  <p className="text-zinc-400 text-[10px] tracking-[0.3em] uppercase font-medium">
-    {config.bio || ""}
-  </p>
-</motion.div>
+        <p className="text-zinc-400 text-[10px] tracking-[0.3em] uppercase font-medium">
+          {config.bio}
+        </p>
+      </motion.div>
 
       <div className="w-full max-w-[400px] space-y-4 z-10">
         <AnimatePresence mode="wait">
-          {!loading && links.map((link, index) => {
+          {links.map((link, index) => {
             const iconName = link.icon 
               ? link.icon.charAt(0).toUpperCase() + link.icon.slice(1).toLowerCase() 
               : "ExternalLink";
