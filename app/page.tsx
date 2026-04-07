@@ -1,6 +1,3 @@
-// ============================================================
-// COLE OS DOIS LINKS CSV DO GOOGLE SHEETS ABAIXO:
-// ============================================================
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -8,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Papa from "papaparse";
 import * as Icons from "lucide-react";
 
-// COLE SEUS LINKS CSV AQUI (Certifique-se de que são os links de PUBLICAÇÃO EM CSV)
 const URL_LINKS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSg2WzGx7rXW7B0aVTVOmv4_0OJ_9T43Ovk_-Y61yOmUhyq_kl5NYDDKV6FtJkUpMknnbGYLbmKExF_/pub?gid=0&single=true&output=csv";
 const URL_CONFIG = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSg2WzGx7rXW7B0aVTVOmv4_0OJ_9T43Ovk_-Y61yOmUhyq_kl5NYDDKV6FtJkUpMknnbGYLbmKExF_/pub?gid=1971191094&single=true&output=csv";
 
@@ -29,16 +25,16 @@ export default function LinktreeProfissional() {
         const textConfig = await resConfig.text();
 
         const dataLinks = Papa.parse(textLinks, { header: true, skipEmptyLines: true }).data;
-        // Encontre esta parte e ajuste para:
         const dataConfig = Papa.parse(textConfig, { header: true, skipEmptyLines: true }).data;
 
-        if (dataConfig && dataConfig.length > 0) {
-        // O "[0]" é o que faz o nome da Natállia aparecer, 
-        // pois pega a primeira linha da planilha.
-        setConfig(dataConfig[0]); 
-}
+        // Filtrar links válidos
+        const validLinks = dataLinks.filter(link => link.url && link.label);
+        setLinks(validLinks);
 
+        if (dataConfig && dataConfig.length > 0) {
+          setConfig(dataConfig[0]);
         }
+
       } catch (error) {
         console.error("Erro ao carregar dados da planilha:", error);
       } finally {
@@ -71,15 +67,15 @@ export default function LinktreeProfissional() {
           style={{ borderColor: `${themeColor}80`, boxShadow: `0 0 30px ${themeColor}33` }}
         >
           <img 
-            src={config.avatar || "https://picsum.photos"} 
+            src={config.avatar || "https://picsum.photos/200"} 
             alt="Avatar" 
             className="object-cover w-full h-full rounded-full bg-zinc-800" 
           />
         </div>
-        // Procure o <h1> e mude para:
-<h1 className="text-2xl font-bold tracking-tighter uppercase mb-1 drop-shadow-md">
-  {config.nome_artista || config["nome_artista"] || "CARREGANDO..."}
-</h1>
+        
+        <h1 className="text-2xl font-bold tracking-tighter uppercase mb-1 drop-shadow-md">
+          {config.nome_artista || config.nome || "CARREGANDO..."}
+        </h1>
 
         <p className="text-zinc-400 text-[10px] tracking-[0.3em] uppercase font-medium">
           {config.bio || ""}
@@ -90,7 +86,6 @@ export default function LinktreeProfissional() {
       <div className="w-full max-w-[400px] space-y-4 z-10">
         <AnimatePresence mode="wait">
           {!loading && links.map((link, index) => {
-            // Ajuste automático do nome do ícone (ex: instagram -> Instagram)
             const iconName = link.icon 
               ? link.icon.charAt(0).toUpperCase() + link.icon.slice(1).toLowerCase() 
               : "ExternalLink";
@@ -128,8 +123,9 @@ export default function LinktreeProfissional() {
       {/* RODAPÉ */}
       <footer className="mt-auto pt-20 pb-8 flex flex-col items-center">
         <a 
-          href="www.instagram.com/le_aohit/" 
+          href="https://www.instagram.com/le_aohit/" 
           target="_blank" 
+          rel="noopener noreferrer"
           className="text-[9px] text-zinc-600 tracking-[0.4em] uppercase font-bold hover:text-white transition-colors"
         >
           Powered by @la_aohit
