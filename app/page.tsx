@@ -29,14 +29,15 @@ export default function LinktreeProfissional() {
         const textConfig = await resConfig.text();
 
         const dataLinks = Papa.parse(textLinks, { header: true, skipEmptyLines: true }).data;
+        // Encontre esta parte e ajuste para:
         const dataConfig = Papa.parse(textConfig, { header: true, skipEmptyLines: true }).data;
 
-        // Pega todos os links que tenham um nome (label)
-        setLinks(dataLinks.filter(l => l.label));
-        
-        // Pega a primeira linha da aba de configuração
         if (dataConfig && dataConfig.length > 0) {
-          setConfig(dataConfig[0]);
+        // O "[0]" é o que faz o nome da Natállia aparecer, 
+        // pois pega a primeira linha da planilha.
+        setConfig(dataConfig[0]); 
+}
+
         }
       } catch (error) {
         console.error("Erro ao carregar dados da planilha:", error);
