@@ -5,54 +5,48 @@ import { motion, AnimatePresence } from "framer-motion";
 import Papa from "papaparse";
 import * as Icons from "lucide-react";
 
-// SUBSTITUA PELOS SEUS LINKS DE PUBLICAÇÃO CSV
-const URL_CONFIG = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSg2WzGx7rXW7B0aVTVOmv4_0OJ_9T43Ovk_-Y61yOmUhyq_kl5NYDDKV6FtJkUpMknnbGYLbmKExF_/pub?gid=1971191094&single=true&output=csv";
-const URL_LINKS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSg2WzGx7rXW7B0aVTVOmv4_0OJ_9T43Ovk_-Y61yOmUhyq_kl5NYDDKV6FtJkUpMknnbGYLbmKExF_/pub?gid=0&single=true&output=csv";
+// COLE AQUI O SEU LINK CSV (PUBLICADO NA WEB)
+const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSg2WzGx7rXW7B0aVTVOmv4_0OJ_9T43Ovk_-Y61yOmUhyq_kl5NYDDKV6FtJkUpMknnbGYLbmKExF_/pub?gid=0&single=true&output=csv";
 
 export default function LinktreeProfissional() {
   const [links, setLinks] = useState([]);
   const [config, setConfig] = useState({});
   const [loading, setLoading] = useState(true);
-  const [debugInfo, setDebugInfo] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setDebugInfo("Carregando configurações...");
+        const response = await fetch(URL_CSV);
+        const text = await response.text();
+        const data = Papa.parse(text, { header: true, skipEmptyLines: true }).data;
         
-        const [resConfig, resLinks] = await Promise.all([
-          fetch(URL_CONFIG),
-          fetch(URL_LINKS)
-        ]);
-
-        const textConfig = await resConfig.text();
-        const textLinks = await resLinks.text();
+        console.log("Dados completos:", data);
         
-        setDebugInfo(`Config CSV (primeiros 200 chars): ${textConfig.substring(0, 200)}`);
-        
-        const dataConfig = Papa.parse(textConfig, { header: true, skipEmptyLines: true }).data;
-        const dataLinks = Papa.parse(textLinks, { header: true, skipEmptyLines: true }).data;
-        
-        console.log("Dados CONFIG:", dataConfig);
-        console.log("Dados LINKS:", dataLinks);
-        
-        // Verifica se tem dados
-        if (dataConfig && dataConfig.length > 0) {
-          setConfig(dataConfig[0]);
-          setDebugInfo(prev => prev + `\nConfig carregada: Nome = ${dataConfig[0].nome_artista || dataConfig[0].nome || "NÃO ENCONTRADO"}`);
-        } else {
-          setDebugInfo(prev => prev + "\n⚠️ Planilha CONFIG está vazia!");
-        }
-        
-        if (dataLinks && dataLinks.length > 0) {
-          const validLinks = dataLinks.filter(link => link.url && link.label);
-          setLinks(validLinks);
-          setDebugInfo(prev => prev + `\nLinks carregados: ${validLinks.length}`);
+        if (data && data.length > 0) {
+          // A PRIMEIRA LINHA é a CONFIGURAÇÃO da artista
+          const primeiraLinha = data[0];
+          
+          setConfig({
+            nome_artista: primeiraLinha.nome_artista || primeiraLinha.nome || "ARTISTA",
+            bio: primeiraLinha.bio || "CANTORA & COMPOSITORA",
+            color: primeiraLinha.color || "#a855f7",
+            avatar: primeiraLinha.avatar || "",
+            bg_image: primeiraLinha.bg_image || ""
+          });
+          
+          // As DEMAIS LINHAS são os LINKS (que têm label e url preenchidos)
+          const linksList = data.filter(row => row.label && row.url).map(row => ({
+            label: row.label,
+            url: row.url,
+            icon: row.icon || "ExternalLink",
+            highlight: row.highlight || "false"
+          }));
+          
+          setLinks(linksList);
         }
         
       } catch (error) {
         console.error("Erro:", error);
-        setDebugInfo(`ERRO: ${error.message}`);
       } finally {
         setLoading(false);
       }
@@ -61,27 +55,16 @@ export default function LinktreeProfissional() {
   }, []);
 
   const themeColor = config.color || "#a855f7";
-  
-  // Dados com fallback para não ficar em branco
-  const nomeArtista = config.nome_artista || config.nome || config.NOME || "ARTISTA";
-  const bioArtista = config.bio || config.BIO || "CANTORA & COMPOSITORA";
-  const avatarUrl = config.avatar || config.AVATAR || "https://randomuser.me/api/portraits/women/68.jpg";
-  const bgImageUrl = config.bg_image || config.BG_IMAGE || "";
 
   return (
     <div className="min-h-screen relative text-white flex flex-col items-center px-6 py-16 font-sans overflow-x-hidden">
-      
-      {/* DEBUG - REMOVA DEPOIS DE FUNCIONAR */}
-      <div className="fixed bottom-0 left-0 right-0 bg-black/90 text-white text-[10px] p-2 z-50 font-mono max-h-32 overflow-auto">
-        <strong>🔍 DEBUG:</strong> {debugInfo}
-      </div>
       
       {/* BACKGROUND */}
       <div 
         className="fixed inset-0 -z-10"
         style={{ 
           backgroundColor: "#0a0a0a",
-          backgroundImage: bgImageUrl ? `linear-gradient(to bottom, rgba(10,10,10,0.6), #0a0a0a), url(${bgImageUrl})` : "none",
+          backgroundImage: config.bg_image ? `linear-gradient(to bottom, rgba(10,10,10,0.8), #0a0a0a), url(${config.bg_image})` : "none",
           backgroundSize: "cover",
           backgroundPosition: "center"
         }}
@@ -94,19 +77,18 @@ export default function LinktreeProfissional() {
           style={{ borderColor: `${themeColor}80`, boxShadow: `0 0 30px ${themeColor}33` }}
         >
           <img 
-            src={avatarUrl}
+            src={config.avatar || "https://randomuser.me/api/portraits/women/68.jpg"} 
             alt="Avatar" 
-            className="w-full h-full rounded-full object-cover bg-zinc-800"
-            onError={(e) => { e.target.src = "https://randomuser.me/api/portraits/women/68.jpg"; }}
+            className="w-full h-full rounded-full object-cover bg-zinc-800" 
           />
         </div>
         
         <h1 className="text-2xl font-bold tracking-tighter uppercase mb-1 drop-shadow-md">
-          {nomeArtista}
+          {config.nome_artista}
         </h1>
 
         <p className="text-zinc-400 text-[10px] tracking-[0.3em] uppercase font-medium">
-          {bioArtista}
+          {config.bio}
         </p>
       </motion.div>
 
@@ -146,12 +128,6 @@ export default function LinktreeProfissional() {
             );
           })}
         </AnimatePresence>
-        
-        {!loading && links.length === 0 && (
-          <div className="text-center text-zinc-500 text-sm p-8 bg-black/40 rounded-2xl">
-            Nenhum link encontrado. Verifique a planilha LINKS.
-          </div>
-        )}
       </div>
       
       {/* RODAPÉ */}
