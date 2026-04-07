@@ -13,7 +13,7 @@ export default function Home() {
     nome_artista: "Nattália Antunes",
     bio: "CANTORA & COMPOSITORA",
     color: "#a855f7",
-    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+    avatar: "",
     bg_image: ""
   });
   const [loading, setLoading] = useState(true);
@@ -82,18 +82,16 @@ export default function Home() {
         className="flex flex-col items-center mb-12 text-center"
       >
         <div 
-          className="w-28 h-28 rounded-full border-2 p-1.5 mb-6 shadow-2xl overflow-hidden"
-          style={{ borderColor: `${themeColor}80`, boxShadow: `0 0 30px ${themeColor}33` }}
-        >
-          <img 
-            src={config.avatar} 
-            alt="Avatar" 
-            className="w-full h-full rounded-full object-cover bg-zinc-800"
-            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => { 
-              e.currentTarget.src = "https://randomuser.me/api/portraits/women/68.jpg"; 
-            }}
-          />
-        </div>
+  className="w-32 h-32 rounded-full border-4 p-1 mb-6 shadow-2xl overflow-hidden"
+  style={{ borderColor: `${themeColor}80`, boxShadow: `0 0 30px ${themeColor}33` }}
+>
+  <img 
+    src={config.avatar} 
+    alt={config.nome_artista}
+    className="w-full h-full rounded-full object-cover"
+    style={{ objectPosition: "center" }}
+  />
+</div>
         
         <h1 className="text-2xl font-bold tracking-tighter uppercase mb-1 drop-shadow-md">
           {config.nome_artista}
