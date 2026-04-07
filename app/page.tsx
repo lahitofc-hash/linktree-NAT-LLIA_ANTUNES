@@ -111,9 +111,19 @@ export default function LinktreeFullDynamic() {
         </AnimatePresence>
       </div>
 
-      <footer className="mt-auto pt-20 text-[9px] text-zinc-600 tracking-[0.4em] uppercase font-bold opacity-50">
-        @LE_AOHIT
-      </footer>
-    </div>
-  );
-}
+      {/* FOOTER PERSONALIZADO */}
+<footer className="mt-auto pt-20 pb-8 flex flex-col items-center gap-2">
+  <div className="h-px w-12 bg-gradient-to-r from-transparent via-zinc-800 to-transparent mb-4" />
+  
+  <a 
+    href="https://www.instagram.com/le_aohit/" // SEU LINK (Instagram, Portfólio ou WhatsApp)
+    target="_blank"
+    rel="noopener noreferrer"
+    className="group flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition-opacity"
+  >
+    <span className="text-[9px] text-zinc-600 tracking-[0.4em] uppercase font-bold group-hover:text-purple-500 transition-colors">
+      Designed by LE_AOHIT
+    </span>
+    <div className="h-[1px] w-0 bg-purple-500 group-hover:w-full transition-all duration-300" />
+  </a>
+</footer>
