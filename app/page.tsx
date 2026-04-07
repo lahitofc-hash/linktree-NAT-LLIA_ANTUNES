@@ -65,7 +65,12 @@ export default function LinktreeProfissional() {
           style={{ borderColor: `${themeColor}80`, boxShadow: `0 0 30px ${themeColor}33` }}
         >
           <div className="w-full h-full rounded-full bg-zinc-800 overflow-hidden">
-             <img src={config.avatar || "https://picsum.photos"} alt="Avatar" className="object-cover w-full h-full" />
+             <img 
+                src={config.avatar && config.avatar.startsWith('http') ? config.avatar : "https://picsum.photos"} 
+                alt="Avatar" 
+                className="object-cover w-full h-full" 
+/>
+
           </div>
         </div>
         <h1 className="text-2xl font-bold tracking-tighter uppercase mb-1 drop-shadow-md">
