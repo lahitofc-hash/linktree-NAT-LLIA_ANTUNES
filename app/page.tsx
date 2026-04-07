@@ -77,30 +77,36 @@ export default function Home() {
       />
 
       <motion.div 
-        initial={{ opacity: 0, y: -20 }} 
-        animate={{ opacity: 1, y: 0 }} 
-        className="flex flex-col items-center mb-12 text-center"
-      >
-        <div 
-  className="w-32 h-32 rounded-full border-4 p-1 mb-6 shadow-2xl overflow-hidden"
-  style={{ borderColor: `${themeColor}80`, boxShadow: `0 0 30px ${themeColor}33` }}
+  initial={{ opacity: 0, y: -20 }} 
+  animate={{ opacity: 1, y: 0 }} 
+  className="flex flex-col items-center mb-12 text-center"
 >
-  <img 
-    src={config.avatar} 
-    alt={config.nome_artista}
-    className="w-full h-full rounded-full object-cover"
-    style={{ objectPosition: "center" }}
-  />
-</div>
-        
-        <h1 className="text-2xl font-bold tracking-tighter uppercase mb-1 drop-shadow-md">
-          {config.nome_artista}
-        </h1>
+  <div 
+    className="w-32 h-32 rounded-full border-4 p-1 mb-6 shadow-2xl overflow-hidden bg-zinc-800"
+    style={{ borderColor: `${themeColor}80`, boxShadow: `0 0 30px ${themeColor}33` }}
+  >
+    {config.avatar ? (
+      <img 
+        src={config.avatar} 
+        alt={config.nome_artista}
+        className="w-full h-full rounded-full object-cover"
+        style={{ objectPosition: "center" }}
+      />
+    ) : (
+      <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold">
+        {config.nome_artista?.charAt(0) || "N"}
+      </div>
+    )}
+  </div>
+  
+  <h1 className="text-2xl font-bold tracking-tighter uppercase mb-1 drop-shadow-md">
+    {config.nome_artista || "Carregando..."}
+  </h1>
 
-        <p className="text-zinc-400 text-[10px] tracking-[0.3em] uppercase font-medium">
-          {config.bio}
-        </p>
-      </motion.div>
+  <p className="text-zinc-400 text-[10px] tracking-[0.3em] uppercase font-medium">
+    {config.bio || ""}
+  </p>
+</motion.div>
 
       <div className="w-full max-w-[400px] space-y-4 z-10">
         <AnimatePresence mode="wait">
