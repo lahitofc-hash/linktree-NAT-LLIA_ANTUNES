@@ -112,7 +112,7 @@ export default function LinktreeFullDynamic() {
       </div>
 
       <footer className="mt-auto pt-20 text-[9px] text-zinc-600 tracking-[0.4em] uppercase font-bold opacity-50">
-        L'A HIT PRODUÇÕES
+        @LE_AOHIT
       </footer>
     </div>
   );
