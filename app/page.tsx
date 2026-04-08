@@ -118,36 +118,69 @@ export default function Home() {
       <div className="w-full max-w-[400px] space-y-4 z-10">
         <AnimatePresence mode="wait">
           {links.map((link, index) => {
-            const iconName = link.icon 
-              ? link.icon.charAt(0).toUpperCase() + link.icon.slice(1).toLowerCase() 
-              : "ExternalLink";
-            
-            const IconComponent = Icons[iconName] || Icons.ExternalLink;
+  const iconName = link.icon 
+    ? link.icon.charAt(0).toUpperCase() + link.icon.slice(1).toLowerCase() 
+    : "ExternalLink";
+  
+  const IconComponent = Icons[iconName] || Icons.ExternalLink;
+  const isHighlight = link.highlight === true;
+  const isEmail = link.url?.startsWith("mailto:");
 
-            return (
-              <motion.a
-                key={index}
-                href={link.url.startsWith("http") ? link.url : `https://${link.url}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`group flex items-center p-4 rounded-2xl border transition-all duration-300
-                  ${link.highlight ? "bg-white text-black border-white shadow-xl" : "bg-black/40 backdrop-blur-md border-white/10 hover:bg-black/60"}
-                `}
-                style={{ 
-                  touchAction: "manipulation",
-                  ...(!link.highlight ? { borderLeft: `4px solid ${themeColor}` } : {}) 
-                }}
-              >
-                <div className="mr-4" style={{ color: link.highlight ? "black" : themeColor }}>
-                  <IconComponent size={24} />
-                </div>
-                <span className="text-[16px] font-bold flex-1 tracking-tight">{link.label}</span>
-                <Icons.ArrowUpRight size={18} className="opacity-20" />
-              </motion.a>
-            );
-          })}
+  return isEmail ? (
+    // Email como texto estático
+    <div
+      key={index}
+      className="flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/5 cursor-default"
+    >
+      <div className="flex items-center gap-4">
+        <div style={{ color: isHighlight ? highlightColor : themeColor }}>
+          <IconComponent size={22} />
+        </div>
+        <span className="text-[15px] font-medium tracking-wide text-white/80">
+          {link.label}
+        </span>
+      </div>
+      <span className="text-xs text-white/40 font-mono">
+        {link.url.replace("mailto:", "")}
+      </span>
+    </div>
+  ) : (
+    // Links normais clicáveis
+    <motion.a
+      key={index}
+      href={link.url.startsWith("http") ? link.url : `https://${link.url}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      whileHover={{ scale: 1.02, x: 4 }}
+      whileTap={{ scale: 0.98 }}
+      className={`
+        group flex items-center justify-between p-4 rounded-xl
+        transition-all duration-300 border backdrop-blur-sm
+        ${isHighlight 
+          ? "border-emerald-500/50 bg-emerald-500/10 hover:bg-emerald-500/20" 
+          : "border-white/10 bg-white/5 hover:bg-white/10"}
+      `}
+      style={{ 
+        touchAction: "manipulation",
+        borderLeftWidth: "3px",
+        borderLeftColor: isHighlight ? highlightColor : themeColor
+      }}
+    >
+      <div className="flex items-center gap-4">
+        <div className="transition-transform group-hover:scale-110" style={{ color: isHighlight ? highlightColor : themeColor }}>
+          <IconComponent size={22} />
+        </div>
+        <span className="text-[15px] font-medium tracking-wide text-white/80 group-hover:text-white">
+          {link.label}
+        </span>
+      </div>
+      <Icons.ArrowUpRight size={16} className="opacity-30 group-hover:opacity-100 transition-opacity text-white/50" />
+    </motion.a>
+  );
+})}
         </AnimatePresence>
       </div>
       
